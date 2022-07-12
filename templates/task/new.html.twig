@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Введите текст заявки {% endblock %}
+
+{% block content %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.state) }}
+        {{ form_row(form.save, { 'label': 'Сохранить изменения' }) }}
+        {{ form_end(form) }}
+
+    {% elseif is_granted('ROLE_USER') %}
+
+        {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.save, { 'label': 'Отправить заявку' }) }}
+        {{ form_end(form) }}
+
+    {% else %}
+        Авторизуйтесь для создания заявки !!
+    {% endif %}
+{% endblock %}

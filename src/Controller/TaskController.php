@@ -10,12 +10,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TaskController extends AbstractController
-
 {
 
 
     /**
-     * @Route("/task", name="app_task")
+     * @Route("/task/new", name="app_task_new")
      */
     public function new(Request $request): Response
     {
@@ -37,9 +36,23 @@ class TaskController extends AbstractController
             }
         }
 
-        return $this->renderForm('task/task.html.twig', [
-            'form' => $form,
-        ]);
+        return $this->renderForm('task/new.html.twig',
+            [
+                'form' => $form,
+            ]);
     }
 
+    /**
+     *
+     * @Route("/tasks", name="app_task")
+     */
+    public function showTasks()
+    {
+        $st = $this->getDoctrine()->getManager();
+        $tasks = $st->getRepository(Task::class)->findAll();
+        return $this->renderForm('task/task.html.twig',
+            [
+                'tasks' => $tasks,
+            ]);
+    }
 }
