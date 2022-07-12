@@ -55,4 +55,33 @@ class TaskController extends AbstractController
                 'tasks' => $tasks,
             ]);
     }
+
+    /**
+     *
+     * @Route("/redact/", name="app_redact")
+     */
+    public function RedactTasks(Request $request)
+    {
+        $id=$_GET["id"];
+        $st = $this->getDoctrine()->getManager();
+        $tasks = $st->getRepository(Task::class)->find($id);
+        $form = $this->createForm(TaskFormType::class, $tasks);
+        if ($request->isMethod('POST'))
+        {
+            $form->submit($request->request->get($form->getName()));
+            if ($form->isSubmitted() && $form->isValid())
+            {
+                $task = $form->getData();
+                $user = $this->getUser();
+                $task->setUser($user);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($task);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_task');
+            }
+        }
+        return $this->renderForm('task/new.html.twig',[
+            'form' => $form,
+        ]);
+    }
 }
